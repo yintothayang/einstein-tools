@@ -13,7 +13,7 @@ class Ein {
   async init(){
     this.browser = await puppeteer.launch(puppeteer_config)
     this.page = await this.browser.newPage()
-    await this.page.setViewport({ width: 680, height: 8000 })
+    await this.page.setViewport({ width: 680, height: 800 })
   }
 
   async login(email, password){
