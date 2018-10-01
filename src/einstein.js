@@ -47,6 +47,10 @@ class Ein {
     await this.page.waitForSelector('#edit-book-page > form > div.add-page > button')
     await this.page.click('#edit-book-page > form > div.add-page > button')
   }
+  // async deletePage(){
+  //   await this.page.waitForSelector('#edit-book-page > form > div.add-page > button')
+  //   await this.page.click('#edit-book-page > form > div.add-page > button')
+  // }
   async copyPage(index){
     await this.page.waitForSelector('#edit-book-page > form > div.pages-container > div > div > div > div.page-actions > span:nth-child(2) > span > button')
     await this.page.click('#edit-book-page > form > div.pages-container > div > div > div > div.page-actions > span:nth-child(2) > span > button')
@@ -66,6 +70,12 @@ class Ein {
       await this.page.waitForSelector('#edit-book-page > form > div.pages-container > div > div:nth-child(' + pageIndex + ') > div > div:nth-child(' + fieldIndex + ') > div.v-input.value.v-text-field > div > div.v-input__slot > div > input[type="text"]')
       await this.page.type('#edit-book-page > form > div.pages-container > div > div:nth-child(' + pageIndex + ') > div > div:nth-child(' + fieldIndex + ') > div.v-input.value.v-text-field > div > div.v-input__slot > div > input[type="text"]', value)
     }
+  }
+
+  async setBookName(name){
+    await this.page.waitForSelector('#edit-book-page > form > div.name-container > div.v-input.name.v-text-field > div > div.v-input__slot > div > input[type="text"]')
+    await this.clearInput('#edit-book-page > form > div.name-container > div.v-input.name.v-text-field > div > div.v-input__slot > div > input[type="text"]')
+    await this.page.type('#edit-book-page > form > div.name-container > div.v-input.name.v-text-field > div > div.v-input__slot > div > input[type="text"]', name)
   }
 
   async saveBook(){
