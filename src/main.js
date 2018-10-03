@@ -26,7 +26,7 @@ async function createJishoBook(words){
 
   // Hack, already a init page on form
   let first = true
-  for(let i=0; i<=words.length; i++){
+  for(let i=0; i<words.length; i++){
     !first ? await Ein.addPage() : void(0)
     first = false
 
@@ -34,7 +34,7 @@ async function createJishoBook(words){
     let wordKeys = Object.keys(word)
 
     let first2 = true
-    for(let j=0; j<=wordKeys.length; j++){
+    for(let j=0; j<wordKeys.length; j++){
       let key = wordKeys[j]
 
       // TODO can't add page field on second page
@@ -51,10 +51,6 @@ async function createJishoBook(words){
     console.log("done page:", i)
   }
 
-  // await Ein.addPage()
-  // await Ein.addPageField()
-  // await Ein.setPageField('taco', 'loco')
-  // await Ein.setPageField('taco4', 'loco3', 2, 1)
 
   // await Ein.saveBook()
 

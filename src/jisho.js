@@ -59,6 +59,19 @@ class Jisho {
       return element.querySelector('.meaning-meaning').innerText
     })
 
+    let wiki_definition = await this.page.$eval(selector, (element) => {
+      let meanings = element.querySelector('.meanings-wrapper')
+      for(let i=0; i<meanings.children.length; i++){
+        let child = meanings.children[i]
+        console.log(child.innerText)
+        if(child.innerText === "Wikipedia definition"){
+          return meanings.children[i+1].querySelector('.meaning-meaning').innerText
+        }
+      }
+    })
+
+
+
     let audio_url = await this.page.$eval(selector, (element) => {
       if(element.querySelector('audio')){
         return element.querySelector('audio').children[0].src
@@ -71,6 +84,7 @@ class Jisho {
       text,
       meaning,
       audio_url,
+      wiki_definition,
     }
   }
 }
