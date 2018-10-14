@@ -51,7 +51,7 @@ class Jisho {
       return element.querySelector('.furigana').innerText
     })
 
-    let text = await this.page.$eval(selector, (element) => {
+    let kana = await this.page.$eval(selector, (element) => {
       return element.querySelector('.text').innerText
     })
 
@@ -72,7 +72,7 @@ class Jisho {
 
 
 
-    let audio_url = await this.page.$eval(selector, (element) => {
+    let $audio = await this.page.$eval(selector, (element) => {
       if(element.querySelector('audio')){
         return element.querySelector('audio').children[0].src
       } else {
@@ -81,10 +81,10 @@ class Jisho {
     })
     return {
       furigana,
-      text,
+      kana,
       meaning,
-      audio_url,
       wiki_definition,
+      $audio,
     }
   }
 }

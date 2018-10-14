@@ -1,8 +1,10 @@
 const Ein = require('./einstein')
 const Jisho = require('./jisho')
+const Google = require('./google')
 
 async function main(){
   let words = await getJishoWords()
+  await getImages(words)
   await createJishoBook(words)
   console.log("done")
 }
@@ -15,6 +17,16 @@ async function getJishoWords(){
   await Jisho.destroy()
   return words
 }
+
+async function getImages(words){
+  await Google.init()
+  for(let i=0; i<words.length; i++){
+    let word = words[i]
+    word.image = await Google.getFirstImage(word.wiki_definition)
+  }
+  await Google.destroy()
+}
+
 
 async function createJishoBook(words){
   console.log(words)
@@ -55,8 +67,6 @@ async function createJishoBook(words){
   // await Ein.saveBook()
 
 
-  // TODO broken on einstein-www
-  // await Ein.copyPage()
 }
 
 main()
