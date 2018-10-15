@@ -5,7 +5,7 @@ const Genki = require('./genki')
 
 async function main(){
   let words = await getGenkiWords(1)
-  for(let i=0; i<=words.length; i++){
+  for(let i=0; i<words.length; i++){
     let word = words[i]
     word.image = await getImage(word.english)
     console.log(word)
@@ -13,7 +13,7 @@ async function main(){
     console.log(word.$audio)
   }
   console.log("words: ", words)
-  // await createBook(words, "Genki Lesson 1")
+  await createBook(words, "Genki Lesson 1")
   console.log("done")
 }
 async function getGenkiWords(lesson){

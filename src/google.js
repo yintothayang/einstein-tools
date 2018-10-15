@@ -1,7 +1,7 @@
 const cheerio = require('cheerio')
 const puppeteer = require('puppeteer')
 const puppeteer_config = {
-  headless: false
+  headless: true
 }
 const GOOGLE_URL = "https://google.com"
 const GOOGLE_IMAGES_URL = "https://images.google.com"

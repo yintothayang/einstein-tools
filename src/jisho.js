@@ -1,7 +1,7 @@
 const cheerio = require('cheerio')
 const puppeteer = require('puppeteer')
 const puppeteer_config = {
-  headless: false
+  headless: true
 }
 const JISHO_URL = "https://jisho.org"
 

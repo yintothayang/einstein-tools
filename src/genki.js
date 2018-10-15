@@ -1,7 +1,7 @@
 const cheerio = require('cheerio')
 const puppeteer = require('puppeteer')
 const puppeteer_config = {
-  headless: false
+  headless: true
 }
 const BASE_URL = "http://ohelo.org/japn/lang/genki_vocab_table.php"
 
