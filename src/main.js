@@ -1,12 +1,27 @@
 const Ein = require('./einstein')
 const Jisho = require('./jisho')
 const Google = require('./google')
+const Genki = require('./genki')
 
 async function main(){
-  let words = await getJishoWords()
-  await getImages(words)
-  await createJishoBook(words)
+  let words = await getGenkiWords(1)
+  for(let i=0; i<=words.length; i++){
+    let word = words[i]
+    word.image = await getImage(word.english)
+    console.log(word)
+    word.$audio = await getAudio(word.kana)
+    console.log(word.$audio)
+  }
+  console.log("words: ", words)
+  // await createBook(words, "Genki Lesson 1")
   console.log("done")
+}
+async function getGenkiWords(lesson){
+  // Get a lesson of Genki vocabulary
+  await Genki.init()
+  let words = await Genki.scrapeLesson(lesson)
+  await Genki.destroy()
+  return words
 }
 
 async function getJishoWords(){
@@ -18,23 +33,29 @@ async function getJishoWords(){
   return words
 }
 
-async function getImages(words){
+async function getImage(query){
   await Google.init()
-  for(let i=0; i<words.length; i++){
-    let word = words[i]
-    word.image = await Google.getFirstImage(word.wiki_definition)
-  }
+  let result = await Google.getFirstImage(query)
   await Google.destroy()
+  return result
+}
+
+async function getAudio(query){
+  await Jisho.init()
+  await Jisho.search(query)
+  let audio = await Jisho.getAudio(query)
+  await Jisho.destroy()
+  return audio
 }
 
 
-async function createJishoBook(words){
+async function createBook(words, name, type="advanced"){
   console.log(words)
 
   await Ein.init()
   await Ein.login('test@test.com', "eueueu")
-  await Ein.newBook("advanced")
-  await Ein.setBookName("Jisho Common 1-20")
+  await Ein.newBook(type)
+  await Ein.setBookName(name)
 
   // Hack, already a init page on form
   let first = true
@@ -49,7 +70,6 @@ async function createJishoBook(words){
     for(let j=0; j<wordKeys.length; j++){
       let key = wordKeys[j]
 
-      // TODO can't add page field on second page
       !first2 ? await Ein.addPageField(i+1) : void(0)
       first2 = false
 
@@ -63,10 +83,7 @@ async function createJishoBook(words){
     console.log("done page:", i)
   }
 
-
   // await Ein.saveBook()
-
-
 }
 
 main()

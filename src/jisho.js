@@ -31,12 +31,16 @@ class Jisho {
     await this.page.click('#search_main > div.inner > button')
   }
 
-  async scrapeWords(){
+  async scrapeWords(wordCount){
     let words = []
     await this.page.waitForSelector('.concepts')
-    let wordCount = await this.page.$eval('.concepts', (element) => {
-      return element.children.length
-    })
+
+    if(!wordCount){
+      let wordCount = await this.page.$eval('.concepts', (element) => {
+        return element.children.length
+      })
+    }
+
     for(let i=2; i<wordCount; i++){
       let selector = '#primary > div > div:nth-child(' + i + ')'
       await this.page.waitForSelector(selector)
@@ -44,6 +48,19 @@ class Jisho {
       words.push(word)
     }
     return words
+  }
+
+  async getAudio(word){
+    await this.page.waitForSelector('.concepts')
+    let selector = '#primary > div > div:nth-child(2)'
+    let audio = await this.page.$eval(selector, (element) => {
+      if(element.querySelector('audio')){
+        return element.querySelector('audio').children[0].src
+      } else {
+        return undefined
+      }
+    })
+    return audio
   }
 
   async scrapeWord(selector){
