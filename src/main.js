@@ -2,36 +2,37 @@ const Ein = require('./einstein')
 const Jisho = require('./jisho')
 const Google = require('./google')
 const Genki = require('./genki')
+const Quia = require('./quia')
 
 async function main(){
-  let words = await getGenkiWords(1)
-  for(let i=0; i<words.length; i++){
-    let word = words[i]
-    word.image = await getImage(word.english)
-    console.log(word)
-    word.$audio = await getAudio(word.kana)
-    console.log(word.$audio)
-  }
-  console.log("words: ", words)
-  await createBook(words, "Genki Lesson 1")
-  console.log("done")
-}
-async function getGenkiWords(lesson){
-  // Get a lesson of Genki vocabulary
-  await Genki.init()
-  let words = await Genki.scrapeLesson(lesson)
-  await Genki.destroy()
-  return words
+
+  await Quia.init()
+  let words = await Quia.scrapeWords('/jg/1622622list.html')
+  await Quia.destroy()
+  console.log(words)
+  await createBook(words, "Treble Clef")
 }
 
-async function getJishoWords(){
-  // Get First page of Jisho common words
-  await Jisho.init()
-  await Jisho.search("#word #common")
-  let words = await Jisho.scrapeWords()
-  await Jisho.destroy()
-  return words
-}
+// async function createGenkiLesson(lesson){
+//   await Genki.init()
+//   let words = await Genki.scrapeLesson(lesson)
+//   await Genki.destroy()
+//   for(let i=0; i<words.length; i++){
+//     let word = words[i]
+//     word.image = await getImage(word.english)
+//     word.$audio = await getAudio(word.kana)
+//   }
+//   await createBook(words, "Genki Lesson " + lesson)
+// }
+
+// async function getJishoWords(){
+//   // Get First page of Jisho common words
+//   await Jisho.init()
+//   await Jisho.search("#word #common")
+//   let words = await Jisho.scrapeWords()
+//   await Jisho.destroy()
+//   return words
+// }
 
 async function getImage(query){
   await Google.init()
@@ -51,7 +52,6 @@ async function getAudio(query){
 
 async function createBook(words, name, type="advanced"){
   console.log(words)
-
   await Ein.init()
   await Ein.login('test@test.com', "eueueu")
   await Ein.newBook(type)
@@ -78,7 +78,6 @@ async function createBook(words, name, type="advanced"){
       console.log("i:", i)
       console.log("j:", j)
       await Ein.setPageField(key, word[key], i+1, j+1)
-      console.log("done key", j)
     }
     console.log("done page:", i)
   }
