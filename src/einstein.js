@@ -2,7 +2,8 @@ const puppeteer = require('puppeteer')
 const puppeteer_config = {
   headless: false
 }
-const EINSTEIN_URL = "https://einstein.software"
+const EINSTEIN_URL = "localhost:8080"
+// const EINSTEIN_URL = "https://einstein.software"
 
 class Ein {
   constructor(){
@@ -30,22 +31,13 @@ class Ein {
   }
 
   async newBook(type){
-    await this.page.waitForSelector('#books-page > div.actions-container > div.item.add-book > button')
-    await this.page.click('#books-page > div.actions-container > div.item.add-book > button')
-
-    if(type === "basic"){
-      await this.page.waitForSelector('#create-card-modal > div.types > div:nth-child(1)')
-      await this.page.click('#create-card-modal > div.types > div:nth-child(1)')
-    } else {
-      await this.page.waitForSelector('#create-card-modal > div.types > div:nth-child(2)')
-      await this.page.click('#create-card-modal > div.types > div:nth-child(2)')
-    }
+    await this.page.goto(EINSTEIN_URL + "/#/books/new_" + type)
   }
 
   // Book Edit
   async addPage(){
-    await this.page.waitForSelector('#edit-book-page > form > div.add-page > button')
-    await this.page.click('#edit-book-page > form > div.add-page > button')
+    await this.page.waitForSelector('#edit-book-page button.add')
+    await this.page.click('#edit-book-page  button.add')
   }
   // async deletePage(){
   //   await this.page.waitForSelector('#edit-book-page > form > div.add-page > button')
@@ -55,21 +47,38 @@ class Ein {
     await this.page.waitForSelector('#edit-book-page > form > div.pages-container > div > div > div > div.page-actions > span:nth-child(2) > span > button')
     await this.page.click('#edit-book-page > form > div.pages-container > div > div > div > div.page-actions > span:nth-child(2) > span > button')
   }
-  async addPageField(index=1){
-    await this.page.waitForSelector('#edit-book-page > form > div.pages-container > div > div:nth-child(' + index + ') > div > div.page-actions > span:nth-child(1) > span > button')
-    await this.page.click('#edit-book-page > form > div.pages-container > div > div:nth-child(' + index + ') > div > div.page-actions > span:nth-child(1) > span > button')
+  async setPageKeys(keys){
+    // Open modal
+    await this.page.waitForSelector('button.edit')
+    await this.page.click('button.edit')
+    await this.page.waitForSelector('#page-keys-modal')
+
+    // Delete current key
+    await this.page.waitForSelector('#page-keys-modal  div.action > button')
+    await this.page.click('#page-keys-modal div.action > button')
+
+    // Add each key
+    await this.page.waitForSelector('#page-keys-modal > div.header > button')
+    for(let i=1; i <= keys.length; i++){
+      await this.page.click('#page-keys-modal > div.header > button')
+      await this.page.waitForSelector('#page-keys-modal > div.body > div > div:nth-child(' + i + ') input')
+      await this.clearInput('#page-keys-modal > div.body > div > div:nth-child(' + i + ') input')
+      await this.page.type('#page-keys-modal > div.body > div > div:nth-child(' + i + ')  input', keys[i-1])
+    }
+
+    // Done
+    await this.page.click('#page-keys-modal > div.v-card__actions > button')
   }
-  async setPageField(key, value, pageIndex=1, fieldIndex=1){
-    if(key){
-      await this.clearInput('#edit-book-page > form > div.pages-container > div > div:nth-child(' + pageIndex + ') > div > div:nth-child(' + fieldIndex + ') > div.v-input.key.v-text-field > div > div.v-input__slot > div > input[type="text"]')
-      await this.page.waitForSelector('#edit-book-page > form > div.pages-container > div > div:nth-child(' + pageIndex + ') > div > div:nth-child(' + fieldIndex + ') > div.v-input.key.v-text-field > div > div.v-input__slot > div > input[type="text"]')
-      await this.page.type('#edit-book-page > form > div.pages-container > div > div:nth-child(' + pageIndex + ') > div > div:nth-child(' + fieldIndex + ') > div.v-input.key.v-text-field > div > div.v-input__slot > div > input[type="text"]', key)
-    }
-    if(value){
-      await this.clearInput('#edit-book-page > form > div.pages-container > div > div:nth-child(' + pageIndex + ') > div > div:nth-child(' + fieldIndex + ') > div.v-input.value.v-text-field > div > div.v-input__slot > div > input[type="text"]')
-      await this.page.waitForSelector('#edit-book-page > form > div.pages-container > div > div:nth-child(' + pageIndex + ') > div > div:nth-child(' + fieldIndex + ') > div.v-input.value.v-text-field > div > div.v-input__slot > div > input[type="text"]')
-      await this.page.type('#edit-book-page > form > div.pages-container > div > div:nth-child(' + pageIndex + ') > div > div:nth-child(' + fieldIndex + ') > div.v-input.value.v-text-field > div > div.v-input__slot > div > input[type="text"]', value)
-    }
+  async setPageField(value, pageIndex=1, fieldIndex=1){
+    pageIndex++
+    fieldIndex++
+    let selector = 'div.pages > div:nth-child(' + pageIndex + ') div.page-rows > div:nth-child(' + fieldIndex + ') input'
+    // await this.page.waitForSelector(selector)
+    await this.clearInput(selector)
+    await this.page.type(selector, value)
+    // await this.page.evaluate((selector, value) => {
+    //   document.querySelector(selector).value = value
+    // }, selector, value)
   }
 
   async setBookName(name){

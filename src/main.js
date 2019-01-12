@@ -5,25 +5,29 @@ const Genki = require('./genki')
 const Quia = require('./quia')
 
 async function main(){
-
-  await Quia.init()
-  let words = await Quia.scrapeWords('/jg/1622622list.html')
-  await Quia.destroy()
-  console.log(words)
-  await createBook(words, "Treble Clef")
+  await createGenkiLesson(4)
 }
 
-// async function createGenkiLesson(lesson){
-//   await Genki.init()
-//   let words = await Genki.scrapeLesson(lesson)
-//   await Genki.destroy()
-//   for(let i=0; i<words.length; i++){
-//     let word = words[i]
-//     word.image = await getImage(word.english)
-//     word.$audio = await getAudio(word.kana)
-//   }
-//   await createBook(words, "Genki Lesson " + lesson)
+// async function createMusicLesson(){
+//   await Quia.init()
+//   let words = await Quia.scrapeWords('/jg/1622622list.html')
+//   await Quia.destroy()
+//   console.log(words)
+//   await createBook(words, "Treble Clef")
 // }
+
+async function createGenkiLesson(lesson){
+  await Genki.init()
+  let words = await Genki.scrapeLesson(lesson)
+  await Genki.destroy()
+  // for(let i=0; i<words.length; i++){
+  //   let word = words[i]
+  //   word.image = await getImage(word.english)
+  //   word.$audio = await getAudio(word.kana)
+  // }
+  // console.log(words)
+  await createBook(words, "Genki Ch " + lesson)
+}
 
 // async function getJishoWords(){
 //   // Get First page of Jisho common words
@@ -51,37 +55,28 @@ async function getAudio(query){
 
 
 async function createBook(words, name, type="advanced"){
-  console.log(words)
+  // console.log(words)
   await Ein.init()
   await Ein.login('test@test.com', "eueueu")
+  // wait
+  await Ein.page.waitForSelector("#books-page")
   await Ein.newBook(type)
   await Ein.setBookName(name)
 
-  // Hack, already a init page on form
-  let first = true
-  for(let i=0; i<words.length; i++){
-    !first ? await Ein.addPage() : void(0)
-    first = false
+  // Set the pageKeys
+  await Ein.setPageKeys(Object.keys(words[0]))
 
+  // Add the pages
+  for(let i=0; i< words.length; i++){
+    i != 0 ? await Ein.addPage() : void(0)
     let word = words[i]
-    let wordKeys = Object.keys(word)
-
-    let first2 = true
-    for(let j=0; j<wordKeys.length; j++){
-      let key = wordKeys[j]
-
-      !first2 ? await Ein.addPageField(i+1) : void(0)
-      first2 = false
-
-      console.log("key:", key)
-      console.log("value:", word[key])
-      console.log("i:", i)
-      console.log("j:", j)
-      await Ein.setPageField(key, word[key], i+1, j+1)
+    let values = Object.values(word)
+    console.log("values: ", values)
+    for(let j=0; j<values.length; j++){
+      let value = values[j]
+      await Ein.setPageField(value, i, j)
     }
-    console.log("done page:", i)
   }
-
   // await Ein.saveBook()
 }
 

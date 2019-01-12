@@ -28,7 +28,6 @@ class Genki {
     let total = await this.page.$eval('tbody', (element) => {
       return element.children.length
     })
-    console.log(total)
     let words = []
     for(let i=2; i<=total; i++){
       words.push(
@@ -36,8 +35,8 @@ class Genki {
           return {
             kana: el.children[0].innerText.replace("\t", ''),
             kanji: el.children[1].innerText.replace("\t", ''),
-            romaji: el.children[2].innerText.replace("\t", ''),
-            english: el.children[3].innerText.replace("\t", ''),
+            english: el.children[2].innerText.replace("\t", ''),
+            // english: el.children[3].innerText.replace("\t", ''),
           }
         })
       )
