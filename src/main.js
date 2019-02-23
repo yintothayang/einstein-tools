@@ -5,7 +5,7 @@ const Genki = require('./genki')
 const Quia = require('./quia')
 
 async function main(){
-  await createGenkiLesson(4)
+  await createGenkiLesson(6)
 }
 
 // async function createMusicLesson(){
